@@ -34,15 +34,31 @@ La respuesta es corta a propósito: `{"ok":true,"id":"…","texto":"Gs. 150.000 
 
 ## Fase 2 — Automático con Apple Wallet
 
-1. Atajos → **Automatización** → **+** → **Transacción** (Wallet) → elegí la tarjeta → **Ejecutar inmediatamente**.
-2. Acción **Obtener contenido de URL** → POST a `https://xiqfpaezjpwdmepxrazz.supabase.co/functions/v1/api/wallet`, encabezado `x-api-key`, JSON:
-   - `monto` → *Entrada del atajo › Importe*
-   - `comercio` → *Entrada del atajo › Comercio*
-   - `tarjeta` → *Entrada del atajo › Tarjeta*
-3. Las reglas de categorización viven en la tabla `reglas_comercio` (vienen `stock` y `biggie` → Supermercado, `netflix` → Suscripción, `uber` → Transporte). Lo que no matchee queda en **Otros**.
-4. En el dashboard, tocá un gasto de Wallet para cambiarle la categoría: te ofrece **crear una regla** para ese comercio (podés acortar el texto, por ejemplo `biggie suc 5` → `biggie`), y los próximos pagos ya entran bien categorizados.
+Requisito: la tarjeta tiene que estar agregada en la app **Wallet**. El disparador solo detecta pagos hechos con esa tarjeta desde Wallet (Apple Pay); los que hagas pasando la tarjeta física no se ven.
+
+1. Atajos → pestaña **Automatización** → **+** → **Transacción** → elegí la tarjeta → **Siguiente**.
+2. Acción **Obtener contenido de URL**:
+   - URL: `https://xiqfpaezjpwdmepxrazz.supabase.co/functions/v1/api/wallet`
+   - Método **POST**.
+   - Encabezados: **una sola fila**, `x-api-key` = tu key. Una fila vacía rompe el pedido (ver "La conexión de red se perdió").
+   - Cuerpo **JSON**, con los tres campos de tipo **Texto** (así llega tal cual y el servidor lo interpreta):
+     - `monto` → *Entrada del atajo* › **Importe**
+     - `comercio` → *Entrada del atajo* › **Comercio**
+     - `tarjeta` → *Entrada del atajo* › **Tarjeta o pase**
+
+     Para elegir la propiedad, tocá la variable *Entrada del atajo* dentro del campo y elegí Importe, Comercio, etc.
+3. Recomendado, para ver qué pasó: **Obtener valor del diccionario** (clave `texto`) y **Mostrar notificación** con `✅ ` seguido del valor. Como la automatización corre sola, esa notificación es la única señal de que anduvo.
+4. Al terminar, elegí **Ejecutar inmediatamente** (sin esto pide confirmación en cada pago) y guardá.
+
+Las reglas de categorización viven en la tabla `reglas_comercio` (vienen `stock` y `biggie` → Supermercado, `netflix` → Suscripción, `uber` → Transporte). Lo que no matchee queda en **Otros**. En el dashboard, tocá un gasto de Wallet para cambiarle la categoría: te ofrece **crear una regla** para ese comercio (podés acortar el texto, por ejemplo `biggie suc 5` → `biggie`), y los próximos pagos ya entran bien categorizados.
 
 **Importante:** si usás la Fase 2, no registres con el atajo manual lo que pagaste con esa tarjeta, para no duplicar. El manual queda para efectivo y transferencias.
+
+Límites conocidos:
+
+- No convierte monedas: un pago en dólares se guardaría con ese número como si fueran guaraníes. Corregilo o ignoralo.
+- Los reembolsos (importe negativo) los rechaza el servidor (`monto inválido`) y no se registran.
+- Una regla nueva se aplica a los pagos futuros, no recategoriza los anteriores.
 
 ## Si algo no anda
 
