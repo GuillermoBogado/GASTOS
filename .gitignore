@@ -1,0 +1,15 @@
+# Secretos: la API key vive en .env.local (local) y en `supabase secrets` (nube). Nunca en el repo.
+.env
+.env.local
+.env.*.local
+*.key
+
+# Supabase CLI
+supabase/.temp/
+supabase/.branches/
+
+# Herramientas locales
+.claude/
+node_modules/
+.DS_Store
+Thumbs.db
