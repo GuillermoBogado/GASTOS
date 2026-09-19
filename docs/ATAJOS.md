@@ -53,14 +53,13 @@ La respuesta es corta a propósito: `{"ok":true,"id":"…","texto":"Gs. 150.000 
 | `{"error":"monto inválido"}` | El paso 2 no está entregando un número (revisá la variable que usa `monto`). |
 | `{"error":"cuenta inválida"}` | `cuenta` no es `Efectivo`, `Tarjeta` o `Transferencia`. |
 | El gasto entra como **Otros** | El texto de la categoría no coincide con ninguna del listado del paso 3 (revisá que no haya errores de tipeo). |
-| `La conexión de red se perdió` | El pedido no llega al servidor. Suele ser una key pegada con un salto de línea invisible (ver abajo). |
+| `La conexión de red se perdió` | El pedido no llega al servidor: iOS lo descarta por un encabezado inválido, casi siempre una **fila vacía** en Encabezados (ver abajo). |
 
 ### Si sale "La conexión de red se perdió"
 
-El servidor responde bien a todo pedido bien formado, así que este error casi siempre es un **encabezado inválido**: la key pegada trae un salto de línea o un espacio raro al final (pasa al copiar con triple toque, que agarra el párrafo entero).
+El servidor responde bien a todo pedido bien formado, así que este error significa que **iOS descartó el pedido antes de enviarlo** por un encabezado inválido. La causa más común, confirmada en este proyecto: una **fila vacía en Encabezados** (sin nombre ni valor, a veces queda al tocar "Agregar nuevo encabezado" sin llenarla).
 
-1. En **Encabezados**, borrá la fila de `x-api-key` y creala de nuevo.
-2. Copiá la key con **doble toque** sobre ella (selecciona solo la key), no con triple toque.
-3. Pegala como valor. Tiene que ocupar **una sola línea** y tener 64 caracteres.
+1. Abrí **Encabezados** y dejá **una sola fila**: `x-api-key` y tu key. Borrá cualquier otra con el botón rojo.
+2. Si sigue igual, rehacé la fila de `x-api-key` y copiá la key con **doble toque** (no triple, que arrastra el salto de línea del párrafo). Tiene que quedar en una sola línea de 64 caracteres.
 
-Para saber si el problema es el encabezado o el cuerpo, probá temporalmente en esa acción: URL `…/api/meta`, Método **GET**, sin cuerpo. Si devuelve las categorías, el encabezado está bien; si sigue el error de red, es el encabezado.
+Para aislar el problema, probá temporalmente en esa acción: URL `…/api/meta`, Método **GET**, sin cuerpo. Si devuelve las categorías, el encabezado está bien.
