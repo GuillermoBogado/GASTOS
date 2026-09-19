@@ -21,7 +21,7 @@ Dashboard: https://guillermobogado.github.io/GASTOS/ (el botón **+** carga gast
 
 | Ruta | Qué es |
 |---|---|
-| `supabase/migrations/0001_init.sql` | Tablas, RLS, categorías/cuentas/reglas iniciales y la función `resumen_mes` |
+| `supabase/migrations/` | `0001` tablas, RLS y `resumen_mes` · `0002` Regalos y Ropa · `0003` tipo por categoría y categorías de ingreso · `0004` `balance_mes` |
 | `supabase/functions/api/index.ts` | La única Edge Function (toda la API) |
 | `web/` | Dashboard (un solo `index.html`), `manifest.json`, `icon.png` |
 | `docs/ATAJOS.md` | Configuración paso a paso en Atajos de iOS |
@@ -60,7 +60,8 @@ Todas las rutas van bajo `https://<REF>.supabase.co/functions/v1/api` y requiere
 | GET | `/gastos` | Lista `?desde=YYYY-MM-DD&hasta=YYYY-MM-DD&tipo=&cuenta=` (máx. 500) |
 | PATCH | `/gastos/:id` | Cambia `categoria` y/o `descripcion` |
 | DELETE | `/gastos/:id` | Borra un registro |
-| GET | `/resumen` | Datos del dashboard `?mes=YYYY-MM&tipo=&cuenta=` |
+| GET | `/resumen` | Datos de los gráficos `?mes=YYYY-MM&tipo=&cuenta=` |
+| GET | `/balance` | Ingresos y gastos del mes + saldo acumulado hasta ese mes `?mes=YYYY-MM&cuenta=` |
 | GET | `/meta` | Categorías (con `tipo`: `gasto`, `ingreso` o `ambos`) y cuentas |
 | GET · POST · DELETE | `/reglas`, `/reglas/:id` | Reglas de autocategorización de Wallet `{patron, categoria}` |
 
@@ -70,6 +71,8 @@ La API perdona los datos sucios que manda Atajos: `monto` acepta `150000`, `"150
 
 - **Seguridad.** Las tablas tienen RLS activado *sin políticas* y sin permisos para `anon`/`authenticated`: la anon key (que es pública) no lee nada. `resumen_mes` tampoco es ejecutable por ellos. Solo entra la Edge Function con la service role, y solo si llega el `x-api-key` correcto (comparación en tiempo constante).
 - **Zona horaria.** Los días y meses se agrupan en `America/Asuncion`. Paraguay usa UTC-3 fijo, por eso los filtros de `/gastos` usan `-03:00`.
+- **Balance.** La tarjeta de arriba del dashboard muestra *cuánto te queda* (ingresos − gastos del mes) y el **saldo acumulado** (todo lo ingresado menos todo lo gastado hasta ese mes). El acumulado parte de cuando empezaste a usar la app: si ya tenías plata, cargala como un ingreso "Saldo inicial".
+- **Gráficos en SVG propio, sin librerías.** Antes usaban Chart.js desde un CDN; en un iPhone se quedaban en blanco. El SVG no depende de ningún servidor externo ni del lienzo de dibujo del navegador, y toma los colores del tema por CSS.
 - **Comparación honesta.** El "▲ 12 %" compara contra el *mismo período* del mes anterior (día 1 → mismo día), no contra el mes entero.
 - **Moneda.** PYG sin decimales; no hay conversión entre monedas.
 - **Wallet + atajo manual = duplicado.** Si automatizás una tarjeta con Wallet, no registres a mano lo pagado con ella.

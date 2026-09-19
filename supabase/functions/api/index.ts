@@ -186,6 +186,18 @@ Deno.serve(async (req) => {
       return json(data);
     }
 
+    // GET /balance — ingresos y gastos del mes + saldo acumulado hasta ese mes
+    if (req.method === "GET" && ruta === "/balance") {
+      const mes = q.get("mes");
+      if (mes && !/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) throw new HttpError(400, "mes inválido (YYYY-MM)");
+      const { data, error } = await sb.rpc("balance_mes", {
+        ...(mes ? { p_mes: `${mes}-01` } : {}),
+        p_cuenta: q.get("cuenta") || null,
+      });
+      if (error) throw error;
+      return json(data);
+    }
+
     // GET /meta
     if (req.method === "GET" && ruta === "/meta") {
       const [c, a] = await Promise.all([

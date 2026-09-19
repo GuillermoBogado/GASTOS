@@ -19,7 +19,7 @@
   color-scheme: dark;
   --bg: #0B1020; --surface: #141B2E; --surface-2: #1C2540; --ink: #E8ECF6; --ink-2: #A9B3CB; --muted: #8592AE;
   --line: #26304A; --accent: #60A5FA; --bar: #3B82F6B3; --today: #60A5FA; --sel: #F97316;
-  --bad: #F87171; --good: #4ADE80; --bad-bg: #F871711F; --good-bg: #4ADE801F; --shadow: 0 8px 30px #0006; --on-accent: #0B1020;
+  --bad: #F87171; --good: #4ADE80; --bad-bg: #F871711F; --good-bg: #4ADE801F; --shadow: 0 8px 30px #0006; --on-accent: #0B1020; --warn: #FBBF24;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 @media (prefers-color-scheme: light) {
@@ -27,7 +27,7 @@
     color-scheme: light;
     --bg: #F3F5FA; --surface: #FFFFFF; --surface-2: #EEF1F8; --ink: #0F172A; --ink-2: #475569; --muted: #5E6B82;
     --line: #E2E8F0; --accent: #2563EB; --bar: #5A8EF0; --today: #1D3FAE; --sel: #EA580C;
-    --bad: #C62828; --good: #15803D; --bad-bg: #C628281A; --good-bg: #15803D1A; --shadow: 0 8px 30px #0F172A26; --on-accent: #FFFFFF;
+    --bad: #C62828; --good: #15803D; --bad-bg: #C628281A; --good-bg: #15803D1A; --shadow: 0 8px 30px #0F172A26; --on-accent: #FFFFFF; --warn: #B45309;
   }
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -81,14 +81,12 @@ body.cargando main { opacity: .55; }
 .card { background: var(--surface); border-radius: 18px; padding: 16px; margin-bottom: 14px; }
 .card h2 { margin: 0 0 2px; font-size: 15px; font-weight: 600; }
 .hint { margin: 0 0 8px; color: var(--muted); font-size: 12.5px; }
-.hero .etq { margin: 0; color: var(--ink-2); font-size: 14px; }
-.hero .total { margin: 2px 0 8px; font-size: clamp(34px, 11vw, 52px); font-weight: 700; letter-spacing: -.025em; line-height: 1.1; white-space: nowrap; }
-.hero .sub { margin: 0; display: flex; gap: 8px 12px; flex-wrap: wrap; align-items: center; color: var(--muted); font-size: 13px; }
+.stat .etq { margin: 0; color: var(--ink-2); font-size: 14px; }
+.stat .total { margin: 2px 0 8px; font-size: clamp(26px, 8vw, 34px); font-weight: 700; letter-spacing: -.02em; line-height: 1.15; white-space: nowrap; }
+.stat .sub { margin: 0; display: flex; gap: 8px 12px; flex-wrap: wrap; align-items: center; color: var(--muted); font-size: 13px; }
 .delta { display: inline-block; padding: 3px 10px; border-radius: 999px; font-weight: 600; font-size: 13px; background: var(--surface-2); color: var(--ink-2); }
 .delta.malo { background: var(--bad-bg); color: var(--bad); }
 .delta.bueno { background: var(--good-bg); color: var(--good); }
-.chart-box { position: relative; height: 200px; }
-.nota-chart { margin: 0; padding: 40px 0; text-align: center; color: var(--muted); }
 
 .donut-box { position: relative; width: min(230px, 100%); aspect-ratio: 1; margin: 6px auto 12px; }
 .donut-centro { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; pointer-events: none; padding: 0 18%; }
@@ -102,6 +100,41 @@ body.cargando main { opacity: .55; }
 .ley-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ley-p { color: var(--muted); font-size: 13px; min-width: 34px; text-align: right; }
 .ley-m { font-variant-numeric: tabular-nums; min-width: 96px; text-align: right; font-weight: 600; }
+
+/* --- balance: cuánto te queda --- */
+.balance .etq { margin: 0; color: var(--ink-2); font-size: 14px; font-weight: 600; }
+.balance .neto { margin: 2px 0 12px; font-size: clamp(34px, 11vw, 52px); font-weight: 700; letter-spacing: -.025em; line-height: 1.1; white-space: nowrap; }
+.pos { color: var(--good); }
+.neg { color: var(--bad); }
+.meter { height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.meter i { display: block; height: 100%; border-radius: 99px; background: var(--accent); }
+.meter.aviso i { background: var(--warn); }
+.meter.peligro i { background: var(--bad); }
+.bal-pct { margin: 8px 0 12px; font-size: 12.5px; color: var(--muted); }
+.bal-fila { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.bal-fila b { font-variant-numeric: tabular-nums; }
+.bal-fila .pt { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 9px; }
+.pt.ing { background: var(--good); }
+.pt.gas { background: var(--bad); }
+.bal-nota { margin: 2px 0 0; }
+
+/* --- gráficos SVG --- */
+.chart-box { position: relative; height: 200px; }
+.chart-box svg { display: block; width: 100%; height: 200px; overflow: visible; }
+.chart-box .g { stroke: var(--line); stroke-width: 1; }
+.chart-box .t { fill: var(--muted); font-size: 11px; font-family: var(--font); }
+.chart-box .b { fill: var(--bar); }
+.chart-box .b.hoy { fill: var(--today); }
+.chart-box .b.sel { fill: var(--sel); }
+.chart-box .hit { fill: transparent; cursor: pointer; }
+.chart-box .hit:hover { fill: var(--ink); fill-opacity: .06; }
+.chart-box .hit.sel { fill: var(--sel); fill-opacity: .14; }
+.tip { position: absolute; z-index: 5; pointer-events: none; background: var(--ink); color: var(--bg); padding: 6px 10px; border-radius: 8px; font-size: 12.5px; white-space: nowrap; box-shadow: var(--shadow); }
+#donut-svg { position: absolute; inset: 0; }
+#donut-svg svg { display: block; width: 100%; height: 100%; }
+.donut-box .seg { cursor: pointer; transition: opacity .15s; }
+.donut-box .seg.off { opacity: .28; }
+.donut-box .vacio-anillo { stroke: var(--line); }
 
 /* --- historial --- */
 .hist-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
@@ -133,8 +166,8 @@ body.cargando main { opacity: .55; }
 .velo.abierto { opacity: 1; pointer-events: auto; }
 .hoja { position: fixed; left: 0; right: 0; bottom: 0; z-index: 41; max-width: 560px; margin: 0 auto; max-height: 88vh; overflow-y: auto;
   background: var(--surface); border-radius: 22px 22px 0 0; box-shadow: var(--shadow);
-  padding: 8px 18px calc(18px + env(safe-area-inset-bottom)); transform: translateY(105%); transition: transform .25s ease; }
-.hoja.abierta { transform: none; }
+  padding: 8px 18px calc(18px + env(safe-area-inset-bottom)); transform: translateY(105%); visibility: hidden; transition: transform .25s ease, visibility 0s linear .25s; }
+.hoja.abierta { transform: none; visibility: visible; transition: transform .25s ease, visibility 0s; }
 .hoja .asa { width: 40px; height: 4px; border-radius: 4px; background: var(--line); margin: 4px auto 14px; }
 .hoja h2 { margin: 0 0 4px; font-size: 18px; }
 .hoja p { margin: 0 0 12px; color: var(--ink-2); }
@@ -209,23 +242,34 @@ body.cargando main { opacity: .55; }
   <div id="ptr"></div>
 
   <main>
-    <section class="card hero">
+    <section class="card balance" id="balance" hidden>
+      <p class="etq" id="bal-etq">Balance</p>
+      <p class="neto" id="bal-neto">—</p>
+      <div class="meter" id="bal-meter" role="img" hidden><i></i></div>
+      <p class="bal-pct" id="bal-pct"></p>
+      <div class="bal-fila"><span><i class="pt ing"></i>Ingresos</span><b id="bal-ing">—</b></div>
+      <div class="bal-fila"><span><i class="pt gas"></i>Gastos</span><b id="bal-gas">—</b></div>
+      <div class="bal-fila"><span>Saldo acumulado</span><b id="bal-acum">—</b></div>
+      <p class="hint bal-nota">Ingresos menos gastos desde que empezaste a usar la app. Si ya tenías plata, cargala como ingreso “Saldo inicial” para partir del monto real.</p>
+    </section>
+
+    <section class="card stat">
       <p class="etq" id="total-etq">Total gastado</p>
       <p class="total" id="total">—</p>
       <p class="sub"><span id="delta" class="delta">—</span><span id="cantidad"></span></p>
     </section>
 
     <section class="card">
-      <h2>Por día</h2>
+      <h2 id="tit-dia">Gasto por día</h2>
       <p class="hint">Tocá una barra para filtrar el historial por ese día.</p>
-      <div class="chart-box"><canvas id="barras" role="img" aria-label="Gasto por día del mes"></canvas></div>
+      <div class="chart-box" id="barras-box"></div>
     </section>
 
     <section class="card">
-      <h2>Por categoría</h2>
+      <h2 id="tit-cat">Gasto por categoría</h2>
       <p class="hint">Tocá una categoría para filtrar el historial.</p>
-      <div class="donut-box"><canvas id="donut" role="img" aria-label="Distribución por categoría"></canvas>
-        <div class="donut-centro"><b id="donut-total">—</b><small>Total del mes</small></div></div>
+      <div class="donut-box" id="donut-box"><div id="donut-svg"></div>
+        <div class="donut-centro"><b id="donut-total">—</b><small>Total del mes</small></div><div class="tip" hidden></div></div>
       <div id="leyenda"></div>
     </section>
 
@@ -261,9 +305,6 @@ body.cargando main { opacity: .55; }
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<!-- Chart.js fijado a una versión y con SRI: la página guarda la API key, así que el script no puede cambiar sin que el navegador lo rechace. -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
-        integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
 <script>
 'use strict';
 const TZ = 'America/Asuncion';
@@ -275,7 +316,6 @@ const FUENTE = { atajo: 'Atajo', wallet: 'Wallet', web: 'Web' };
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const colorSeguro = (c) => (/^#[0-9a-fA-F]{6}$/.test(c || '') ? c : '#94A3B8');
-const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const hoyStr = () => new Date().toLocaleDateString('en-CA', { timeZone: TZ });
 const diaLocal = (f) => new Date(f).toLocaleDateString('en-CA', { timeZone: TZ });
 
@@ -288,7 +328,7 @@ const store = {
 let cfg = store.get();
 
 const state = { mes: hoyStr().slice(0, 7), tipo: 'gasto', cuenta: '', dia: null, categoria: null, meta: null };
-let resumen = null, gastosMes = [], barChart = null, donutChart = null, seq = 0, ultimaCarga = 0, hayDonut = false;
+let resumen = null, gastosMes = [], balance = null, seq = 0, ultimaCarga = 0;
 
 /* ---------- API ---------- */
 class ApiError extends Error { constructor(status, msg) { super(msg); this.status = status; } }
@@ -339,12 +379,14 @@ async function cargar() {
     const [y, m] = state.mes.split('-').map(Number);
     const hasta = new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);   // último día del mes, sin depender de la zona del teléfono
     const base = { tipo: state.tipo, ...(state.cuenta && { cuenta: state.cuenta }) };
-    const [res, lista] = await Promise.all([
+    const [res, lista, bal] = await Promise.all([
       api('/resumen?' + new URLSearchParams({ mes: state.mes, ...base })),
       api('/gastos?' + new URLSearchParams({ desde: `${state.mes}-01`, hasta, ...base })),
+      // el balance mira ingresos Y gastos del mes (no depende de la pestaña); si falla, el resto del dashboard sigue andando
+      api('/balance?' + new URLSearchParams({ mes: state.mes, ...(state.cuenta && { cuenta: state.cuenta }) })).catch((e) => { if (e.status === 401) throw e; return null; }),
     ]);
     if (mi !== seq) return;   // llegó otra carga más nueva mientras esta viajaba
-    resumen = res; gastosMes = lista; ultimaCarga = Date.now();
+    resumen = res; gastosMes = lista; balance = bal; ultimaCarga = Date.now();
     aviso(null);
     render();
   } catch (e) {
@@ -359,11 +401,13 @@ async function cargar() {
 function aviso(txt) { $('#aviso').hidden = !txt; $('#aviso-txt').textContent = txt || ''; }
 
 /* ---------- render ---------- */
-function render() { renderMes(); renderTotal(); renderBarras(); renderDonut(); renderLista(); }
+function render() { renderMes(); renderBalance(); renderTotal(); renderBarras(); renderDonut(); renderLista(); }
 
 function renderMes() {
   $('#mes-label').textContent = etiquetaMes(state.mes);
   $('#mes-next').disabled = state.mes >= hoyStr().slice(0, 7);
+  $('#tit-dia').textContent = state.tipo === 'gasto' ? 'Gasto por día' : 'Ingreso por día';
+  $('#tit-cat').textContent = state.tipo === 'gasto' ? 'Gasto por categoría' : 'Ingreso por categoría';
   document.querySelectorAll('.filtros .seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tipo === state.tipo)));
 }
 
@@ -383,53 +427,89 @@ function renderTotal() {
 }
 
 const compactar = (v) => (v >= 1e6 ? `${+(v / 1e6).toFixed(1)}M` : v >= 1e3 ? `${+(v / 1e3).toFixed(1)}k` : String(v));
-const sinChart = (canvasId) => {
-  const box = $(canvasId).parentElement;
-  if (!box.querySelector('.nota-chart')) box.insertAdjacentHTML('afterbegin', '<p class="nota-chart">No se pudo cargar el gráfico (¿sin conexión?). El historial sigue disponible abajo.</p>');
-  $(canvasId).style.display = 'none';
+const menos = (v) => (v < 0 ? '−' : '') + fmt.format(Math.abs(v));   // "−Gs. 90.000", con signo menos de verdad
+
+/* ---------- balance: cuánto te queda ---------- */
+function renderBalance() {
+  const sec = $('#balance');
+  if (!balance) { sec.hidden = true; return; }
+  sec.hidden = false;
+  const ing = Number(balance.ingresos), gas = Number(balance.gastos), neto = ing - gas;
+  const acum = Number(balance.acumulado_ingresos) - Number(balance.acumulado_gastos);
+  $('#bal-etq').textContent = neto >= 0 ? `Te queda en ${etiquetaMes(state.mes)}` : `Déficit de ${etiquetaMes(state.mes)}`;
+  const n = $('#bal-neto'); n.textContent = menos(neto); n.className = `neto ${neto >= 0 ? 'pos' : 'neg'}`;
+  const m = $('#bal-meter'), pct = ing > 0 ? (gas / ing) * 100 : null;
+  if (pct === null) {
+    m.hidden = true;
+    $('#bal-pct').textContent = gas > 0 ? 'Todavía no cargaste ingresos este mes: tocá + para agregarlos.' : 'Todavía no hay movimientos este mes.';
+  } else {
+    const txt = pct > 100 ? `Gastaste ${Math.round(pct)} % de tus ingresos: ${fmt.format(gas - ing)} de más.`
+      : `Gastaste ${pct > 0 && pct < 1 ? 'menos del 1' : `el ${Math.round(pct)}`} % de tus ingresos.`;
+    m.hidden = false; m.className = `meter${pct > 100 ? ' peligro' : pct >= 80 ? ' aviso' : ''}`;   // el relleno pasa de acento a alerta a peligro
+    m.firstElementChild.style.width = `${Math.min(pct, 100)}%`; m.setAttribute('aria-label', txt);
+    $('#bal-pct').textContent = txt;
+  }
+  $('#bal-ing').textContent = `+ ${fmt.format(ing)}`;
+  $('#bal-gas').textContent = `− ${fmt.format(gas)}`;
+  const a = $('#bal-acum'); a.textContent = menos(acum); a.className = acum >= 0 ? 'pos' : 'neg';
+}
+
+/* ---------- gráficos SVG propios: sin librerías externas ni canvas ---------- */
+let geoBarras = null, donutCats = [], donutTotal = 0, tipTimer;
+const pasoRedondo = (max, tramos) => {   // 1, 2, 2.5, 5 × 10^k: ejes con números limpios
+  const crudo = max / tramos, pot = 10 ** Math.floor(Math.log10(crudo)), f = crudo / pot;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * pot;
 };
+function tipEn(box, html, x, y) {
+  const t = box.querySelector('.tip');
+  if (!t) return;
+  t.innerHTML = html; t.hidden = false;
+  const w = t.offsetWidth, h = t.offsetHeight;
+  t.style.left = `${Math.max(0, Math.min(x - w / 2, box.clientWidth - w))}px`;
+  t.style.top = `${Math.max(0, y - h - 10)}px`;
+}
+const ocultarTip = (box) => { const t = box.querySelector('.tip'); if (t) t.hidden = true; };
+const tipAuto = (box) => { clearTimeout(tipTimer); tipTimer = setTimeout(() => ocultarTip(box), 2500); };   // en táctil no hay "salir": se apaga solo
 
 function renderBarras() {
-  if (!window.Chart) return sinChart('#barras');
-  const diario = resumen.diario, hoy = hoyStr();
-  const data = {
-    labels: diario.map((d) => Number(d.dia.slice(8))),
-    datasets: [{
-      data: diario.map((d) => Number(d.total)),
-      backgroundColor: diario.map((d) => (d.dia === state.dia ? css('--sel') : d.dia === hoy ? css('--today') : css('--bar'))),
-      borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: 'bottom', maxBarThickness: 24,
-    }],
-  };
-  if (barChart) { barChart.data = data; barChart.update('none'); return; }
-  barChart = new Chart($('#barras'), {
-    type: 'bar', data,
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },   // la columna entera es el blanco del toque, no solo la barra fina
-      plugins: {
-        legend: { display: false },
-        tooltip: { displayColors: false, callbacks: { title: (it) => etiquetaDia(resumen.diario[it[0].dataIndex].dia), label: (c) => fmt.format(c.raw) } },
-      },
-      scales: {
-        x: { grid: { display: false }, border: { color: css('--line') }, ticks: { color: css('--muted'), maxRotation: 0, autoSkip: true, maxTicksLimit: 16 } },
-        y: { beginAtZero: true, border: { display: false }, grid: { color: css('--line') }, ticks: { color: css('--muted'), maxTicksLimit: 5, callback: compactar } },
-      },
-      onClick: (evt, _els, chart) => {
-        const els = chart.getElementsAtEventForMode(evt, 'index', { intersect: false }, true);
-        if (!els.length) return;
-        const dia = resumen.diario[els[0].index].dia;
-        state.dia = state.dia === dia ? null : dia;
-        renderBarras(); renderLista();
-      },
-    },
+  const box = $('#barras-box'), diario = resumen.diario, hoy = hoyStr();
+  const W = Math.max(Math.round(box.clientWidth), 240), H = 200, M = { l: 38, r: 4, t: 10, b: 22 };
+  const pw = W - M.l - M.r, ph = H - M.t - M.b, slot = pw / diario.length;
+  const vals = diario.map((d) => Number(d.total)), mx = Math.max(0, ...vals);
+  const paso = pasoRedondo(mx || 100000, 4), techo = paso * 4;
+  const yDe = (v) => M.t + ph - (v / techo) * ph;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${state.tipo === 'gasto' ? 'Gasto' : 'Ingreso'} por día del mes">`;
+  for (let i = 0; i <= 4; i++) {
+    const yy = yDe(paso * i);
+    s += `<line class="g" x1="${M.l}" x2="${W - M.r}" y1="${yy}" y2="${yy}"/><text class="t" x="${M.l - 6}" y="${yy + 4}" text-anchor="end">${compactar(paso * i)}</text>`;
+  }
+  const bw = Math.min(24, slot * 0.66);   // barras finas: 24 px como máximo, con el aire sobrante alrededor
+  diario.forEach((d, i) => {
+    const v = vals[i], sel = d.dia === state.dia;
+    if (v > 0) {
+      const h = (v / techo) * ph, x = M.l + slot * (i + 0.5) - bw / 2, top = M.t + ph - h, r = Math.min(4, bw / 2, h);
+      s += `<path class="b ${sel ? 'sel' : d.dia === hoy ? 'hoy' : ''}" d="M${x} ${top + h}V${top + r}Q${x} ${top} ${x + r} ${top}H${x + bw - r}Q${x + bw} ${top} ${x + bw} ${top + r}V${top + h}Z"/>`;
+    }
+    s += `<rect class="hit${sel ? ' sel' : ''}" data-i="${i}" x="${M.l + slot * i}" y="${M.t}" width="${slot}" height="${ph}"/>`;   // la columna entera es el blanco del toque
   });
+  const cada = Math.max(1, Math.ceil(22 / slot));
+  diario.forEach((d, i) => { const n = Number(d.dia.slice(8)); if ((n - 1) % cada === 0) s += `<text class="t" x="${M.l + slot * (i + 0.5)}" y="${H - 6}" text-anchor="middle">${n}</text>`; });
+  box.innerHTML = `${s}</svg><div class="tip" hidden></div>`;
+  geoBarras = { M, slot, techo, ph, W, vals };
+}
+
+function tipDia(i) {
+  const g = geoBarras;
+  if (!g || !resumen) return;
+  const yy = g.M.t + g.ph - (g.vals[i] / g.techo) * g.ph;
+  tipEn($('#barras-box'), `${esc(etiquetaDia(resumen.diario[i].dia))} · <b>${fmt.format(g.vals[i])}</b>`, g.M.l + g.slot * (i + 0.5), yy);
 }
 
 function renderDonut() {
-  const cats = resumen.por_categoria, total = Number(resumen.total);
-  hayDonut = cats.length > 0 && total > 0;
+  const cats = resumen.por_categoria, total = Number(resumen.total), hay = cats.length > 0 && total > 0;
+  donutCats = hay ? cats : []; donutTotal = total;
   $('#donut-total').textContent = fmt.format(total);
-  $('#leyenda').innerHTML = hayDonut ? cats.map((c) => {
+  $('#leyenda').innerHTML = hay ? cats.map((c) => {
     const pct = (Number(c.total) / total) * 100;
     return `<button class="ley" data-cat="${esc(c.categoria)}" aria-pressed="${state.categoria === c.categoria}">
       <span class="dot" style="background:${colorSeguro(c.color)}"></span>
@@ -437,31 +517,54 @@ function renderDonut() {
       <span class="ley-p">${pct < 1 ? '<1' : Math.round(pct)}%</span>
       <span class="ley-m">${fmt.format(c.total)}</span></button>`;
   }).join('') : '<p class="vacio">Sin movimientos este mes</p>';
-  if (!window.Chart) return sinChart('#donut');
-  const data = hayDonut ? {
-    labels: cats.map((c) => `${c.emoji || '📦'} ${c.categoria}`),
-    datasets: [{
-      data: cats.map((c) => Number(c.total)),
-      backgroundColor: cats.map((c) => colorSeguro(c.color) + (state.categoria && c.categoria !== state.categoria ? '4D' : '')),
-      borderColor: css('--surface'), borderWidth: 2, hoverOffset: 4,   // el borde del color de la tarjeta hace de hueco entre segmentos
-    }],
-  } : { labels: ['Sin datos'], datasets: [{ data: [1], backgroundColor: [css('--line')], borderWidth: 0 }] };
-  if (donutChart) { donutChart.data = data; donutChart.options.plugins.tooltip.enabled = hayDonut; donutChart.update('none'); return; }
-  donutChart = new Chart($('#donut'), {
-    type: 'doughnut', data,
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: '70%',
-      plugins: { legend: { display: false }, tooltip: { enabled: hayDonut, callbacks: { label: (c) => fmt.format(c.raw) } } },
-      onClick: (evt, _els, chart) => {
-        if (!hayDonut) return;
-        const els = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
-        if (els.length) alternarCategoria(resumen.por_categoria[els[0].index].categoria);
-      },
-    },
-  });
+  const R = 80, SW = 30, C = 2 * Math.PI * R;   // anillo de grosor 30 sobre un radio de 95: hueco central del ~68 %
+  let s = `<svg viewBox="0 0 200 200" role="img" aria-label="${state.tipo === 'gasto' ? 'Gasto' : 'Ingreso'} por categoría">`;
+  if (!hay) s += `<circle class="vacio-anillo" cx="100" cy="100" r="${R}" fill="none" stroke-width="${SW}"/>`;
+  else {
+    let acum = 0;
+    cats.forEach((c, i) => {
+      const len = (Number(c.total) / total) * C, hueco = cats.length > 1 ? 2 : 0;   // 2 unidades de aire entre segmentos
+      const estado = state.categoria ? (c.categoria === state.categoria ? ' on' : ' off') : '';
+      s += `<circle class="seg${estado}" data-i="${i}" cx="100" cy="100" r="${R}" fill="none" stroke="${colorSeguro(c.color)}" stroke-width="${SW}" stroke-dasharray="${Math.max(len - hueco, 0.5).toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-acum).toFixed(2)}" transform="rotate(-90 100 100)"/>`;
+      acum += len;
+    });
+  }
+  $('#donut-svg').innerHTML = `${s}</svg>`;
 }
 
 function alternarCategoria(cat) { state.categoria = state.categoria === cat ? null : cat; renderDonut(); renderLista(); }
+
+const bBox = $('#barras-box'), dBox = $('#donut-box');
+bBox.addEventListener('pointermove', (e) => {
+  if (e.pointerType === 'touch') return;
+  const h = e.target.closest('[data-i]');
+  if (h) tipDia(+h.dataset.i); else ocultarTip(bBox);
+});
+bBox.addEventListener('pointerleave', () => ocultarTip(bBox));
+bBox.addEventListener('click', (e) => {
+  const h = e.target.closest('[data-i]');
+  if (!h || !resumen) return;
+  const i = +h.dataset.i, dia = resumen.diario[i].dia;
+  state.dia = state.dia === dia ? null : dia;
+  renderBarras(); renderLista(); tipDia(i); tipAuto(bBox);
+});
+const tipCat = (i, e) => {
+  const c = donutCats[i], r = dBox.getBoundingClientRect();
+  if (c) tipEn(dBox, `${esc(c.emoji || '📦')} ${esc(c.categoria)} · <b>${fmt.format(c.total)}</b> · ${Math.round((c.total / donutTotal) * 100)}%`, e.clientX - r.left, e.clientY - r.top);
+};
+dBox.addEventListener('pointermove', (e) => {
+  if (e.pointerType === 'touch') return;
+  const h = e.target.closest('[data-i]');
+  if (h) tipCat(+h.dataset.i, e); else ocultarTip(dBox);
+});
+dBox.addEventListener('pointerleave', () => ocultarTip(dBox));
+dBox.addEventListener('click', (e) => {
+  const h = e.target.closest('[data-i]');
+  if (!h || !donutCats[+h.dataset.i]) return;
+  alternarCategoria(donutCats[+h.dataset.i].categoria); tipCat(+h.dataset.i, e); tipAuto(dBox);
+});
+// Si cambia el ancho (girar el teléfono, ventana), el gráfico de barras se vuelve a dibujar a la medida.
+if (window.ResizeObserver) new ResizeObserver(() => { if (resumen && geoBarras && Math.abs(bBox.clientWidth - geoBarras.W) > 1) renderBarras(); }).observe(bBox);
 
 function renderLista() {
   const items = gastosMes
@@ -759,16 +862,6 @@ addEventListener('touchend', () => {
   if (tirar && tirar.dy > 110) cargar();
   ptr.style.height = '0'; ptr.classList.remove('listo'); tirar = null;
 });
-
-// Los gráficos leen los colores del tema al crearse: si el sistema cambia de claro a oscuro, se recrean.
-matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => {
-  barChart?.destroy(); donutChart?.destroy(); barChart = donutChart = null;
-  if (resumen) render();
-});
-if (window.Chart) {
-  Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
-  Chart.defaults.animation = matchMedia('(prefers-reduced-motion: reduce)').matches ? false : { duration: 250 };
-}
 
 /* ---------- arranque ---------- */
 renderMesRapido();
