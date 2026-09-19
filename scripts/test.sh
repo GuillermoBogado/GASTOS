@@ -64,6 +64,7 @@ seccion "Meta"
 req GET /meta;                                            check "GET /meta → 200" 200 "$STATUS"
 check "incluye la categoría Otros" true "$(printf '%s' "$BODY" | jx 'd.categorias.some(c=>c.nombre==="Otros")')"
 check "incluye la cuenta Efectivo" true "$(printf '%s' "$BODY" | jx 'd.cuentas.includes("Efectivo")')"
+check "incluye las categorías Regalos y Ropa" true "$(printf '%s' "$BODY" | jx 'd.categorias.some(c=>c.nombre==="Regalos")&&d.categorias.some(c=>c.nombre==="Ropa")')"
 check "cada categoría trae emoji y color" true "$(printf '%s' "$BODY" | jx 'd.categorias.every(c=>c.emoji&&c.color.startsWith("#"))')"
 
 seccion "Estado inicial ($MES)"
@@ -146,6 +147,13 @@ check "tipo=ingreso sube 5000" 5000 "$(node -e "console.log($(printf '%s' "$BODY
 req GET "/resumen?mes=2026-13";                            check "mes inválido → 400" 400 "$STATUS"
 req GET "/resumen";                                        check "sin parámetros usa el mes actual → 200" 200 "$STATUS"
 check "…y devuelve el mes actual" "$MES" "$(printf '%s' "$BODY" | jx 'd.mes')"
+
+seccion "Categorías tal como las manda el Atajo (emoji al final, MAYÚSCULAS, plurales)"
+for par in "COMIDAS🍔|Comida" "SALIDAS👥|Salir" "TRANSPORTE🚗|Transporte" "REGALOS🎁|Regalos" "ROPA👕|Ropa" "SUSCRIPCION🛜|Suscripción" "🎁 regalos|Regalos" "Comidas|Comida"; do
+  entrada="${par%%|*}"; esperada="${par##*|}"
+  crear /gastos "{\"monto\":1,\"categoria\":\"$entrada\",\"descripcion\":\"__test__ alias\"}"
+  check "\"$entrada\" → $esperada" "$esperada" "$(printf '%s' "$BODY" | jx 'd.texto.split(" · ")[1]')"
+done
 
 seccion "PATCH /gastos/:id — recategorizar"
 req PATCH "/gastos/$ID_K" '{"categoria":"🍔 Comida"}';    check "PATCH categoría → 200" 200 "$STATUS"

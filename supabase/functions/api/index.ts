@@ -72,10 +72,18 @@ async function nombres(tabla: "categorias" | "cuentas"): Promise<string[]> {
   return n;
 }
 
-// "🍔 Comida" → "Comida"; sin emoji, sin mayúsculas ni tildes que importen. null si no existe.
+// Sinónimos frecuentes (en minúsculas y sin tildes) → categoría oficial.
+const ALIAS_CATEGORIA: Record<string, string> = { comidas: "Comida", salidas: "Salir", salida: "Salir" };
+
+// "🍔 Comida", "COMIDA🍔" o "comida" → "Comida": se ignoran emojis/símbolos a ambos lados, mayúsculas y tildes.
+// null si no existe.
 async function buscarCategoria(raw: unknown): Promise<string | null> {
-  const limpio = norm(String(raw ?? "").replace(/^[^\p{L}]+/u, ""));
-  return (await nombres("categorias")).find((c) => norm(c) === limpio) ?? null;
+  const limpio = norm(String(raw ?? "").replace(/^[^\p{L}]+|[^\p{L}]+$/gu, ""));
+  const todas = await nombres("categorias");
+  const directa = todas.find((c) => norm(c) === limpio);
+  if (directa) return directa;
+  const alias = ALIAS_CATEGORIA[limpio];
+  return alias && todas.includes(alias) ? alias : null;
 }
 const resolverCategoria = async (raw: unknown) => (await buscarCategoria(raw)) ?? "Otros";
 

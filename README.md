@@ -64,7 +64,7 @@ Todas las rutas van bajo `https://<REF>.supabase.co/functions/v1/api` y requiere
 | GET | `/meta` | Categorías y cuentas |
 | GET · POST · DELETE | `/reglas`, `/reglas/:id` | Reglas de autocategorización de Wallet `{patron, categoria}` |
 
-La API perdona los datos sucios que manda Atajos: `monto` acepta `150000`, `"150.000"`, `"Gs. 150.000"`, `"₲150.000"`, `"12,50"`; `categoria` acepta `"🍔 Comida"` (sin importar mayúsculas ni tildes) y cae en `Otros` si no existe; una `descripcion` vacía se guarda como `null`.
+La API perdona los datos sucios que manda Atajos: `monto` acepta `150000`, `"150.000"`, `"Gs. 150.000"`, `"₲150.000"`, `"12,50"`; `categoria` acepta `"🍔 Comida"` o `"COMIDA🍔"` (emoji antes o después, sin importar mayúsculas ni tildes; `Comidas`/`Salidas` valen como sinónimos) y cae en `Otros` si no existe; una `descripcion` vacía se guarda como `null`.
 
 ## Decisiones que conviene conocer
 

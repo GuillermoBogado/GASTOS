@@ -7,7 +7,8 @@ Tu API key es la que se mostró una sola vez al desplegar (también está en `.e
 
 1. App **Atajos** → **+** → nombre: **Gasto**.
 2. Acción **Solicitar entrada** → Tipo: **Número** → Pregunta: "¿Monto?".
-3. Acción **Lista** con: `🍔 Comida`, `🛒 Supermercado`, `🍻 Salir`, `🚗 Transporte`, `🏠 Vivienda`, `💡 Servicios`, `📺 Suscripción`, `🎮 Entretenimiento`, `💊 Salud`, `📚 Educación`, `📦 Otros`.
+3. Acción **Lista** con: `🍔 Comida`, `🛒 Supermercado`, `🍻 Salir`, `🚗 Transporte`, `🏠 Vivienda`, `💡 Servicios`, `📺 Suscripción`, `🎮 Entretenimiento`, `💊 Salud`, `📚 Educación`, `🎁 Regalos`, `👕 Ropa`, `📦 Otros`.
+   Podés escribirlas como quieras: con el emoji antes o después, en mayúsculas, sin tildes. También se aceptan `Comidas` y `Salidas` (→ Comida y Salir). Lo que no reconozca se guarda como **Otros**.
 4. Acción **Elegir de la lista** (sobre la Lista).
 5. Acción **Solicitar entrada** → Tipo: **Texto** → Pregunta: "Descripción (opcional)". Se puede dejar vacía.
 6. Acción **Obtener contenido de URL**:
@@ -51,4 +52,15 @@ La respuesta es corta a propósito: `{"ok":true,"id":"…","texto":"Gs. 150.000 
 | `{"error":"unauthorized"}` | Falta el encabezado `x-api-key` o la key es otra. |
 | `{"error":"monto inválido"}` | El paso 2 no está entregando un número (revisá la variable que usa `monto`). |
 | `{"error":"cuenta inválida"}` | `cuenta` no es `Efectivo`, `Tarjeta` o `Transferencia`. |
-| El gasto entra como **Otros** | El texto de la categoría no coincide con ninguna del listado del paso 3. |
+| El gasto entra como **Otros** | El texto de la categoría no coincide con ninguna del listado del paso 3 (revisá que no haya errores de tipeo). |
+| `La conexión de red se perdió` | El pedido no llega al servidor. Suele ser una key pegada con un salto de línea invisible (ver abajo). |
+
+### Si sale "La conexión de red se perdió"
+
+El servidor responde bien a todo pedido bien formado, así que este error casi siempre es un **encabezado inválido**: la key pegada trae un salto de línea o un espacio raro al final (pasa al copiar con triple toque, que agarra el párrafo entero).
+
+1. En **Encabezados**, borrá la fila de `x-api-key` y creala de nuevo.
+2. Copiá la key con **doble toque** sobre ella (selecciona solo la key), no con triple toque.
+3. Pegala como valor. Tiene que ocupar **una sola línea** y tener 64 caracteres.
+
+Para saber si el problema es el encabezado o el cuerpo, probá temporalmente en esa acción: URL `…/api/meta`, Método **GET**, sin cuerpo. Si devuelve las categorías, el encabezado está bien; si sigue el error de red, es el encabezado.
