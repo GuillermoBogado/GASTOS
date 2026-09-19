@@ -73,7 +73,9 @@ async function nombres(tabla: "categorias" | "cuentas"): Promise<string[]> {
 }
 
 // Sinónimos frecuentes (en minúsculas y sin tildes) → categoría oficial.
-const ALIAS_CATEGORIA: Record<string, string> = { comidas: "Comida", salidas: "Salir", salida: "Salir" };
+const ALIAS_CATEGORIA: Record<string, string> = {
+  comidas: "Comida", salidas: "Salir", salida: "Salir", salario: "Sueldo", venta: "Ventas",
+};
 
 // "🍔 Comida", "COMIDA🍔" o "comida" → "Comida": se ignoran emojis/símbolos a ambos lados, mayúsculas y tildes.
 // null si no existe.

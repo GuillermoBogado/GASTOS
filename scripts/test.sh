@@ -65,6 +65,8 @@ req GET /meta;                                            check "GET /meta → 2
 check "incluye la categoría Otros" true "$(printf '%s' "$BODY" | jx 'd.categorias.some(c=>c.nombre==="Otros")')"
 check "incluye la cuenta Efectivo" true "$(printf '%s' "$BODY" | jx 'd.cuentas.includes("Efectivo")')"
 check "incluye las categorías Regalos y Ropa" true "$(printf '%s' "$BODY" | jx 'd.categorias.some(c=>c.nombre==="Regalos")&&d.categorias.some(c=>c.nombre==="Ropa")')"
+check "Sueldo y Ventas son categorías de ingreso" true "$(printf '%s' "$BODY" | jx 'd.categorias.filter(c=>c.tipo==="ingreso").map(c=>c.nombre).sort().join()==="Sueldo,Ventas"')"
+check "Regalos y Otros sirven para ambos tipos" true "$(printf '%s' "$BODY" | jx '["Regalos","Otros"].every(n=>d.categorias.find(c=>c.nombre===n).tipo==="ambos")')"
 check "cada categoría trae emoji y color" true "$(printf '%s' "$BODY" | jx 'd.categorias.every(c=>c.emoji&&c.color.startsWith("#"))')"
 
 seccion "Estado inicial ($MES)"
@@ -154,6 +156,24 @@ for par in "COMIDAS🍔|Comida" "SALIDAS👥|Salir" "TRANSPORTE🚗|Transporte" 
   crear /gastos "{\"monto\":1,\"categoria\":\"$entrada\",\"descripcion\":\"__test__ alias\"}"
   check "\"$entrada\" → $esperada" "$esperada" "$(printf '%s' "$BODY" | jx 'd.texto.split(" · ")[1]')"
 done
+
+seccion "Ingresos (como los manda el dashboard y el Atajo)"
+resumen "&tipo=gasto"; GASTO_T0="$(printf '%s' "$BODY" | jx 'd.total')"; GASTO_C0="$(printf '%s' "$BODY" | jx 'd.cantidad')"
+crear /gastos '{"monto":8500000,"tipo":"ingreso","categoria":"SUELDO💰","cuenta":"Transferencia","descripcion":"__test__ sueldo","fuente":"web"}'; ID_S="$ID"
+check "ingreso con categoría \"SUELDO💰\" → 201" 201 "$STATUS"
+check "texto muestra la categoría Sueldo" true "$(printf '%s' "$BODY" | jx 'd.texto.includes("Sueldo")')"
+crear /gastos '{"monto":1,"tipo":"ingreso","categoria":"Salario","descripcion":"__test__ alias"}'
+check "sinónimo Salario → Sueldo" Sueldo "$(printf '%s' "$BODY" | jx 'd.texto.split(" · ")[1]')"
+crear /gastos '{"monto":2500000,"tipo":"ingreso","categoria":"Ventas","fecha":"2026-01-15","descripcion":"__test__ fecha pasada","fuente":"web"}'; ID_V="$ID"
+check "ingreso con fecha pasada (solo día) → 201" 201 "$STATUS"
+req GET "/gastos?desde=2026-01-15&hasta=2026-01-15&tipo=ingreso"
+check "aparece el 15 de enero, no el día anterior" true "$(printf '%s' "$BODY" | jx "d.some(x=>x.id==='$ID_V'&&x.monto===2500000&&x.fuente==='web')")"
+req GET "/resumen?mes=2026-01&tipo=ingreso"
+check "el resumen de enero suma ese ingreso en su día" true "$(printf '%s' "$BODY" | jx 'd.diario.find(x=>x.dia==="2026-01-15").total>=2500000&&d.por_categoria.some(c=>c.categoria==="Ventas")')"
+resumen "&tipo=ingreso"
+check "el resumen del mes actual incluye Sueldo entre los ingresos" true "$(printf '%s' "$BODY" | jx 'd.por_categoria.some(c=>c.categoria==="Sueldo"&&c.total>=8500000)')"
+resumen "&tipo=gasto"
+check "cargar ingresos no altera el total ni la cantidad de gastos" "$GASTO_T0|$GASTO_C0" "$(printf '%s' "$BODY" | jx 'd.total')|$(printf '%s' "$BODY" | jx 'd.cantidad')"
 
 seccion "PATCH /gastos/:id — recategorizar"
 req PATCH "/gastos/$ID_K" '{"categoria":"🍔 Comida"}';    check "PATCH categoría → 200" 200 "$STATUS"

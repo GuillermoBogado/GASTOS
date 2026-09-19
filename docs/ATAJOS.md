@@ -24,6 +24,18 @@ Tu API key es la que se mostró una sola vez al desplegar (también está en `.e
 
 La respuesta es corta a propósito: `{"ok":true,"id":"…","texto":"Gs. 150.000 · Comida"}`, y eso es lo que muestra la notificación.
 
+## Registrar ingresos
+
+**Desde el dashboard (lo más simple):** botón **+** abajo a la derecha → **Ingreso** → monto → categoría (`💰 Sueldo`, `🛍️ Ventas`, `🎁 Regalos`, `📦 Otros`) → **Guardar**. La cuenta por defecto es Transferencia y la fecha es hoy; si el ingreso fue antes, cambiá la fecha. Con ese mismo botón podés cargar gastos.
+
+**Con un atajo "Ingreso"** (para hacerlo con un gesto, igual que los gastos):
+
+1. En Atajos, mantené presionado el atajo **Gasto** → **Duplicar** → nombralo **Ingreso**.
+2. En la acción **Lista**, dejá las categorías de ingreso: `SUELDO💰`, `VENTAS🛍️`, `REGALOS🎁`, `OTRO📦`.
+3. En el JSON de **Obtener contenido de URL**, agregá un campo nuevo: `tipo` (Texto) = `ingreso`. Si querés, cambiá `cuenta` a `Transferencia`.
+
+Sin ese campo `tipo`, todo se registra como gasto.
+
 ## Activación
 
 - **Doble toque posterior**: Ajustes → Accesibilidad → Tocar → **Toque atrás** → Doble toque → **Gasto**.

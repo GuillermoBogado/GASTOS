@@ -2,7 +2,7 @@
 
 Registro de gastos en menos de 5 segundos desde el iPhone (Atajos + doble toque en la espalda del teléfono) y un dashboard web instalable como app. Costo cero: Supabase free tier + GitHub Pages. Sin servidores propios, sin frameworks, sin build.
 
-Dashboard: https://guillermobogado.github.io/GASTOS/
+Dashboard: https://guillermobogado.github.io/GASTOS/ (el botón **+** carga gastos e ingresos a mano)
 
 ```
 [iPhone]
@@ -61,7 +61,7 @@ Todas las rutas van bajo `https://<REF>.supabase.co/functions/v1/api` y requiere
 | PATCH | `/gastos/:id` | Cambia `categoria` y/o `descripcion` |
 | DELETE | `/gastos/:id` | Borra un registro |
 | GET | `/resumen` | Datos del dashboard `?mes=YYYY-MM&tipo=&cuenta=` |
-| GET | `/meta` | Categorías y cuentas |
+| GET | `/meta` | Categorías (con `tipo`: `gasto`, `ingreso` o `ambos`) y cuentas |
 | GET · POST · DELETE | `/reglas`, `/reglas/:id` | Reglas de autocategorización de Wallet `{patron, categoria}` |
 
 La API perdona los datos sucios que manda Atajos: `monto` acepta `150000`, `"150.000"`, `"Gs. 150.000"`, `"₲150.000"`, `"12,50"`; `categoria` acepta `"🍔 Comida"` o `"COMIDA🍔"` (emoji antes o después, sin importar mayúsculas ni tildes; `Comidas`/`Salidas` valen como sinónimos) y cae en `Otros` si no existe; una `descripcion` vacía se guarda como `null`.
