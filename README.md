@@ -2,6 +2,8 @@
 
 Registro de gastos en menos de 5 segundos desde el iPhone (Atajos + doble toque en la espalda del teléfono) y un dashboard web instalable como app. Costo cero: Supabase free tier + GitHub Pages. Sin servidores propios, sin frameworks, sin build.
 
+Dashboard: https://guillermobogado.github.io/GASTOS/
+
 ```
 [iPhone]
   Doble toque posterior / Botón de acción
@@ -45,7 +47,7 @@ Copiá `.env.example` a `.env.local` (ignorado por git), completalo y verificá 
 scripts/test.sh
 ```
 
-Después subí el repo a GitHub y en **Settings → Pages → Source** elegí **GitHub Actions**. Cada push a `main` que toque `web/` republica el dashboard. Al abrirlo por primera vez te pide la URL de la API y la key (se guardan solo en ese dispositivo).
+Después subí el repo a GitHub y en **Settings → Pages → Source** elegí **GitHub Actions**. Cada push a `main` republica el dashboard. Al abrirlo por primera vez te pide la URL de la API y la key (se guardan solo en ese dispositivo).
 
 ## API
 

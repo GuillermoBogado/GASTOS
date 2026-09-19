@@ -27,7 +27,7 @@ La respuesta es corta a propósito: `{"ok":true,"id":"…","texto":"Gs. 150.000 
 
 - **Doble toque posterior**: Ajustes → Accesibilidad → Tocar → **Toque atrás** → Doble toque → **Gasto**.
 - **Botón de acción** (iPhone 15 Pro o posterior): Ajustes → Botón de acción → **Atajo** → **Gasto**.
-- **Dashboard**: abrí `https://<USUARIO>.github.io/<REPO>/` en Safari → Compartir → **Agregar a inicio**.
+- **Dashboard**: abrí `https://guillermobogado.github.io/GASTOS/` en Safari → Compartir → **Agregar a inicio**.
 
 > La app instalada en la pantalla de inicio guarda sus datos **aparte de Safari**. Abrí el ícono nuevo y pegá ahí la URL de la API y la key (la key es larga: copiala en tu PC y pegala desde el portapapeles universal, o mandátela por Notas/AirDrop).
 
